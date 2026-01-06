@@ -1,0 +1,7 @@
+.envrc
+node_modules/
+.turbo/
+.next/
+.direnv
+.husky
+.github
