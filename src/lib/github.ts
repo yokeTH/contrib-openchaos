@@ -26,15 +26,12 @@ const GITHUB_REPO = "skridlevsky/openchaos";
 export async function getOpenPRs(): Promise<PullRequest[]> {
   const [owner, repo] = GITHUB_REPO.split("/");
 
-  const response = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/pulls?state=open`,
-    {
-      headers: {
-        Accept: "application/vnd.github.v3+json",
-      },
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    }
-  );
+  const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open`, {
+    headers: {
+      Accept: "application/vnd.github.v3+json",
+    },
+    next: { revalidate: 300 }, // Cache for 5 minutes
+  });
 
   if (!response.ok) {
     if (response.status === 403) {
@@ -57,33 +54,46 @@ export async function getOpenPRs(): Promise<PullRequest[]> {
         votes,
         createdAt: pr.created_at,
       };
-    })
+    }),
   );
 
   // Sort by votes descending
   return prsWithVotes.sort((a, b) => b.votes - a.votes);
 }
 
-async function getPRVotes(
-  owner: string,
-  repo: string,
-  prNumber: number
-): Promise<number> {
-  const response = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/reactions`,
-    {
-      headers: {
-        Accept: "application/vnd.github.squirrel-girl-preview+json",
-      },
-      next: { revalidate: 300 },
-    }
-  );
+async function getPRVotes(owner: string, repo: string, prNumber: number): Promise<number> {
+  let allReactions: GitHubReaction[] = [];
+  let page = 1;
 
-  if (!response.ok) {
-    return 0;
+  while (true) {
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/reactions?per_page=100&page=${page}`,
+      {
+        headers: {
+          Accept: "application/vnd.github.squirrel-girl-preview+json",
+        },
+        next: { revalidate: 300 },
+      },
+    );
+
+    if (!response.ok) {
+      break;
+    }
+
+    const reactions: GitHubReaction[] = await response.json();
+
+    if (reactions.length === 0) {
+      break;
+    }
+
+    allReactions = allReactions.concat(reactions);
+
+    if (reactions.length < 100) {
+      break;
+    }
+
+    page++;
   }
 
-  const reactions: GitHubReaction[] = await response.json();
-  
-  return reactions.filter((r) => r.content === "+1").length - reactions.filter((r) => r.content === "-1").length;
+  return allReactions.filter((r) => r.content === "+1").length - allReactions.filter((r) => r.content === "-1").length;
 }
