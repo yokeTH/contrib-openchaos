@@ -84,5 +84,6 @@ async function getPRVotes(
   }
 
   const reactions: GitHubReaction[] = await response.json();
-  return reactions.filter((r) => r.content === "+1").length;
+  
+  return reactions.filter((r) => r.content === "+1").length - reactions.filter((r) => r.content === "-1").length;
 }
