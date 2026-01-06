@@ -102,5 +102,5 @@ async function getPRVotes(
     page++;
   }
 
-  return allReactions.filter((r) => r.content === "+1").length;
+  return allReactions.filter((r) => r.content === "+1").length - allReactions.filter((r) => r.content === "-1").length;
 }
