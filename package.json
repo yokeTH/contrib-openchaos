@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
-    "format": "prettier $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write --ignore-unknown"
+    "format": "prettier $(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g') --write --ignore-unknown ."
   },
   "dependencies": {
     "next": "16.1.1",
