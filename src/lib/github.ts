@@ -32,7 +32,7 @@ export async function getOpenPRs(): Promise<PullRequest[]> {
       headers: {
         Accept: "application/vnd.github.v3+json",
       },
-      next: { revalidate: 60 }, // Cache for 1 minute
+      next: { revalidate: 300 }, // Cache for 5 minutes
     }
   );
 
@@ -75,7 +75,7 @@ async function getPRVotes(
       headers: {
         Accept: "application/vnd.github.squirrel-girl-preview+json",
       },
-      next: { revalidate: 60 },
+      next: { revalidate: 300 },
     }
   );
 
