@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react';
 
 function getNextSunday8PM(): Date {
   const now = new Date();
@@ -8,7 +8,9 @@ function getNextSunday8PM(): Date {
 
   // Set to next Sunday
   const daysUntilSunday = (7 - now.getUTCDay()) % 7;
-  target.setUTCDate(now.getUTCDate() + (daysUntilSunday === 0 ? 7 : daysUntilSunday));
+  target.setUTCDate(
+    now.getUTCDate() + (daysUntilSunday === 0 ? 7 : daysUntilSunday),
+  );
 
   // Set to 09:00 UTC
   target.setUTCHours(9, 0, 0, 0);
@@ -39,7 +41,7 @@ function getTimeRemaining(target: Date): {
 }
 
 function pad(n: number): string {
-  return n.toString().padStart(2, "0");
+  return n.toString().padStart(2, '0');
 }
 
 export function Countdown() {
@@ -58,21 +60,22 @@ export function Countdown() {
 
   if (!mounted) {
     return (
-      <div className="text-center">
-        <div className="text-5xl sm:text-7xl font-mono font-bold tracking-tight">
+      <div className='text-center'>
+        <div className='font-mono text-5xl font-bold tracking-tight sm:text-7xl'>
           --d --h --m --s
         </div>
-        <p className="mt-4 text-zinc-500 text-lg">until next merge</p>
+        <p className='mt-4 text-lg text-zinc-500'>until next merge</p>
       </div>
     );
   }
 
   return (
-    <div className="text-center">
-      <div className="text-5xl sm:text-7xl font-mono font-bold tracking-tight">
-        {time.days}d {pad(time.hours)}h {pad(time.minutes)}m {pad(time.seconds)}s
+    <div className='text-center'>
+      <div className='font-mono text-5xl font-bold tracking-tight sm:text-7xl'>
+        {time.days}d {pad(time.hours)}h {pad(time.minutes)}m {pad(time.seconds)}
+        s
       </div>
-      <p className="mt-4 text-zinc-400 text-lg">until next merge</p>
+      <p className='mt-4 text-lg text-zinc-400'>until next merge</p>
     </div>
   );
 }

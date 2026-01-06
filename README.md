@@ -27,6 +27,7 @@ A self-evolving open source project. Every week, the community votes on PRs, and
 Everything. Including these rules.
 
 Someone could submit a PR that:
+
 - Changes the UI completely
 - Adds a whole new feature
 - Removes something
