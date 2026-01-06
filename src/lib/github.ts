@@ -61,11 +61,7 @@ export async function getOpenPRs(): Promise<PullRequest[]> {
   return prsWithVotes.sort((a, b) => b.votes - a.votes);
 }
 
-async function getPRVotes(
-  owner: string,
-  repo: string,
-  prNumber: number
-): Promise<number> {
+async function getPRVotes(owner: string, repo: string, prNumber: number): Promise<number> {
   let allReactions: GitHubReaction[] = [];
   let page = 1;
 
@@ -77,7 +73,7 @@ async function getPRVotes(
           Accept: "application/vnd.github.squirrel-girl-preview+json",
         },
         next: { revalidate: 300 },
-      }
+      },
     );
 
     if (!response.ok) {
