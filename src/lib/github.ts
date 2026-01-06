@@ -26,15 +26,12 @@ const GITHUB_REPO = "skridlevsky/openchaos";
 export async function getOpenPRs(): Promise<PullRequest[]> {
   const [owner, repo] = GITHUB_REPO.split("/");
 
-  const response = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/pulls?state=open`,
-    {
-      headers: {
-        Accept: "application/vnd.github.v3+json",
-      },
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    }
-  );
+  const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open`, {
+    headers: {
+      Accept: "application/vnd.github.v3+json",
+    },
+    next: { revalidate: 300 }, // Cache for 5 minutes
+  });
 
   if (!response.ok) {
     if (response.status === 403) {
@@ -57,18 +54,14 @@ export async function getOpenPRs(): Promise<PullRequest[]> {
         votes,
         createdAt: pr.created_at,
       };
-    })
+    }),
   );
 
   // Sort by votes descending
   return prsWithVotes.sort((a, b) => b.votes - a.votes);
 }
 
-async function getPRVotes(
-  owner: string,
-  repo: string,
-  prNumber: number
-): Promise<number> {
+async function getPRVotes(owner: string, repo: string, prNumber: number): Promise<number> {
   let allReactions: GitHubReaction[] = [];
   let page = 1;
 
@@ -80,7 +73,7 @@ async function getPRVotes(
           Accept: "application/vnd.github.squirrel-girl-preview+json",
         },
         next: { revalidate: 300 },
-      }
+      },
     );
 
     if (!response.ok) {
