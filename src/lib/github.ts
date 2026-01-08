@@ -23,15 +23,24 @@ interface GitHubReaction {
 
 const GITHUB_REPO = "skridlevsky/openchaos";
 
+function getHeaders(accept: string): Record<string, string> {
+  const headers: Record<string, string> = { Accept: accept };
+  if (process.env.GITHUB_TOKEN) {
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  }
+  return headers;
+}
+
 export async function getOpenPRs(): Promise<PullRequest[]> {
   const [owner, repo] = GITHUB_REPO.split("/");
 
-  const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open`, {
-    headers: {
-      Accept: "application/vnd.github.v3+json",
-    },
-    next: { revalidate: 300 }, // Cache for 5 minutes
-  });
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/pulls?state=open`,
+    {
+      headers: getHeaders("application/vnd.github.v3+json"),
+      next: { revalidate: 300 }, // Cache for 5 minutes
+    }
+  );
 
   if (!response.ok) {
     if (response.status === 403) {
@@ -69,9 +78,7 @@ async function getPRVotes(owner: string, repo: string, prNumber: number): Promis
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/reactions?per_page=100&page=${page}`,
       {
-        headers: {
-          Accept: "application/vnd.github.squirrel-girl-preview+json",
-        },
+        headers: getHeaders("application/vnd.github.squirrel-girl-preview+json"),
         next: { revalidate: 300 },
       },
     );
